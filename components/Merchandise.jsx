@@ -95,7 +95,7 @@ Please let me know the next steps for purchase. Thank you!`;
                                         {product.price}
                                     </span>
                                     <button className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-lg shadow-orange-500/20 transition-all transform hover:scale-110 active:scale-95">
-                                        <ShoppingCart size={18} />
+                                        Buy Now
                                     </button>
                                 </div>
                             </div>
