@@ -13,24 +13,39 @@ export default function AdminPage() {
         description: ""
     });
     const [loading, setLoading] = useState(false);
+    const [fetchingMetadata, setFetchingMetadata] = useState(false);
     const [status, setStatus] = useState(null); // 'success' or 'error'
 
     const removeTag = (tagToRemove) => {
         setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = async (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        // Auto-fetch metadata when YouTube URL is pasted
+        if (name === 'videoUrl' && value) {
+            const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/;
+            if (youtubeRegex.test(value)) {
+                // Small delay to ensure the URL is complete
+                setTimeout(() => {
+                    handleFetchMetadata(value);
+                }, 300);
+            }
+        }
     };
 
-    const handleFetchMetadata = async () => {
-        if (!formData.videoUrl) return;
+    const handleFetchMetadata = async (url = null) => {
+        const videoUrl = url || formData.videoUrl;
+        if (!videoUrl) return;
 
+        setFetchingMetadata(true);
         try {
             const res = await fetch('https://voiceconsults.onrender.com/api/metadata', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ videoUrl: formData.videoUrl })
+                body: JSON.stringify({ videoUrl })
             });
 
             if (!res.ok) throw new Error("Failed to fetch");
@@ -46,6 +61,8 @@ export default function AdminPage() {
         } catch (error) {
             setStatus('error');
             setTimeout(() => setStatus(null), 3000);
+        } finally {
+            setFetchingMetadata(false);
         }
     };
 
@@ -129,12 +146,20 @@ export default function AdminPage() {
                                 placeholder="https://youtube.com/watch?v=..."
                                 className="w-full pl-12 pr-20 py-3 border border-stone-200 rounded-xl text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all bg-stone-50"
                             />
-                            <button
-                                onClick={handleFetchMetadata}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-orange-600 hover:text-orange-700 font-bold text-sm px-3 py-1"
-                            >
-                                Fetch
-                            </button>
+                            {fetchingMetadata ? (
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-orange-600">
+                                    <Loader2 className="animate-spin" size={16} />
+                                    <span className="text-sm font-medium">Fetching...</span>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => handleFetchMetadata()}
+                                    disabled={!formData.videoUrl}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-orange-600 hover:text-orange-700 font-bold text-sm px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Fetch
+                                </button>
+                            )}
                         </div>
                     </div>
 
