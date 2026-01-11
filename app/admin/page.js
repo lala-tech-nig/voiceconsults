@@ -46,7 +46,7 @@ export default function AdminPage() {
         console.log('🎬 Fetching YouTube metadata for:', videoUrl);
         setFetchingMetadata(true);
         try {
-            const res = await fetch('https://voiceconsults.onrender.com/api/metadata', {
+            const res = await fetch('http://localhost:5000/api/metadata', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ videoUrl })
