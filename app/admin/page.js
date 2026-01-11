@@ -28,10 +28,13 @@ export default function AdminPage() {
         if (name === 'videoUrl' && value) {
             const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/;
             if (youtubeRegex.test(value)) {
+                console.log('✨ YouTube URL detected, auto-fetching in 300ms...');
                 // Small delay to ensure the URL is complete
                 setTimeout(() => {
                     handleFetchMetadata(value);
                 }, 300);
+            } else {
+                console.log('⚠️ URL does not match YouTube pattern:', value);
             }
         }
     };
@@ -40,25 +43,35 @@ export default function AdminPage() {
         const videoUrl = url || formData.videoUrl;
         if (!videoUrl) return;
 
+        console.log('🎬 Fetching YouTube metadata for:', videoUrl);
         setFetchingMetadata(true);
         try {
-            const res = await fetch('https://voiceconsults.onrender.com/api/metadata', {
+            const res = await fetch('http://localhost:5000/api/metadata', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ videoUrl })
             });
 
-            if (!res.ok) throw new Error("Failed to fetch");
+            console.log('📡 Response status:', res.status);
+
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
+                console.error('❌ Fetch failed:', errorData);
+                throw new Error(errorData.message || "Failed to fetch");
+            }
 
             const data = await res.json();
+            console.log('✅ Metadata received:', data);
+
             setFormData(prev => ({
                 ...prev,
                 title: data.title || "",
                 description: data.description || "",
                 thumbnail: data.thumbnail || "",
-                // Store duration implicitly or add a field if backend schema supports it (which it does now)
+                duration: data.duration || "10:00"
             }));
         } catch (error) {
+            console.error('💥 Error fetching metadata:', error);
             setStatus('error');
             setTimeout(() => setStatus(null), 3000);
         } finally {
