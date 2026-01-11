@@ -16,7 +16,8 @@ export default function AdminHeader() {
             </div>
 
             <div className="flex items-center gap-6 text-sm font-medium text-stone-600">
-                <a href="#" className="hover:text-stone-900 transition-colors">Dashboard</a>
+                <a href="/admin" className="hover:text-stone-900 transition-colors">Dashboard</a>
+                <a href="/admin/reports" className="hover:text-stone-900 transition-colors">Reports</a>
                 <button className="border border-stone-200 hover:border-stone-300 text-stone-700 px-4 py-2 rounded-full transition-colors">
                     Logout
                 </button>

@@ -58,6 +58,66 @@ const fetchYouTubeMetadata = async (url) => {
 };
 
 // Routes
+const Subscriber = require('./models/Subscriber');
+const Contact = require('./models/Contact');
+
+// POST: Subscribe (New Endpoint)
+app.post('/api/subscribe', async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    try {
+        // Check if already subscribed
+        const existing = await Subscriber.findOne({ email });
+        if (existing) {
+            return res.status(200).json({ message: "Already subscribed" });
+        }
+
+        const newSubscriber = new Subscriber({ email });
+        await newSubscriber.save();
+        res.status(201).json({ message: "Subscribed successfully" });
+    } catch (err) {
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
+// POST: Contact (New Endpoint)
+app.post('/api/contact', async (req, res) => {
+    const { name, email, subject, message } = req.body;
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: "Name, email, and message are required" });
+    }
+
+    try {
+        const newContact = new Contact({ name, email, subject, message });
+        await newContact.save();
+        res.status(201).json({ message: "Message sent successfully" });
+    } catch (err) {
+        res.status(500).json({ message: "Server error", error: err.message });
+    }
+});
+
+// GET: Fetch all subscribers
+app.get('/api/subscribers', async (req, res) => {
+    try {
+        const subscribers = await Subscriber.find().sort({ createdAt: -1 });
+        res.json(subscribers);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// GET: Fetch all contacts
+app.get('/api/contacts', async (req, res) => {
+    try {
+        const contacts = await Contact.find().sort({ createdAt: -1 });
+        res.json(contacts);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// GET: Root
 
 // GET: Root
 app.get('/', (req, res) => {

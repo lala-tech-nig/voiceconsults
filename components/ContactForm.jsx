@@ -5,11 +5,39 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function ContactForm() {
     const [submitted, setSubmitted] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        subject: "General Inquiry",
+        message: ""
+    });
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 5000);
+
+        try {
+            const res = await fetch('https://voiceconsults.onrender.com/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (res.ok) {
+                setSubmitted(true);
+                setFormData({ name: "", email: "", subject: "General Inquiry", message: "" });
+                setTimeout(() => setSubmitted(false), 5000);
+            } else {
+                alert("Failed to send message.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error sending message.");
+        }
     };
 
     return (
@@ -31,16 +59,37 @@ export default function ContactForm() {
                             <div className="space-y-6">
                                 <div>
                                     <label className="block text-sm font-bold text-stone-700 mb-2">Name</label>
-                                    <input type="text" placeholder="Your name" className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all" required />
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        placeholder="Your name"
+                                        className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all"
+                                        required
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-stone-700 mb-2">Email</label>
-                                    <input type="email" placeholder="you@example.com" className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all" required />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        placeholder="you@example.com"
+                                        className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all"
+                                        required
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-stone-700 mb-2">Subject</label>
                                     <div className="relative">
-                                        <select className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 appearance-none focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all cursor-pointer">
+                                        <select
+                                            name="subject"
+                                            value={formData.subject}
+                                            onChange={handleChange}
+                                            className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 appearance-none focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all cursor-pointer"
+                                        >
                                             <option>General Inquiry</option>
                                             <option>Support</option>
                                             <option>Feedback</option>
@@ -53,6 +102,9 @@ export default function ContactForm() {
                             <div className="flex flex-col h-full">
                                 <label className="block text-sm font-bold text-stone-700 mb-2">Message</label>
                                 <textarea
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
                                     placeholder="How can we help?"
                                     className="w-full flex-grow bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-stone-700 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-all resize-none min-h-[200px]"
                                     required

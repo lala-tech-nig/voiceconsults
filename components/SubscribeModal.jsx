@@ -7,14 +7,29 @@ export default function SubscribeModal({ isOpen, onClose }) {
     const [email, setEmail] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        // Simulate API call
-        setTimeout(() => {
-            // Close valid for demo
-            setTimeout(onClose, 2000);
-        }, 2000);
+
+        try {
+            const res = await fetch('https://voiceconsults.onrender.com/api/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
+            if (res.ok) {
+                setSubmitted(true);
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('subscribed', 'true');
+                }
+                setTimeout(onClose, 3000);
+            } else {
+                alert("Something went wrong. Please try again.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Failed to subscribe.");
+        }
     };
 
     return (

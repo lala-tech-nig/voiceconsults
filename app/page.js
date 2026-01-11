@@ -40,9 +40,11 @@ export default function Home() {
   const { width, height } = useWindowSize();
 
   useEffect(() => {
-    // Show modal after 5 seconds
+    // Show modal after 5 seconds ONLY if not already subscribed
     const modalTimer = setTimeout(() => {
-      setShowModal(true);
+      if (!localStorage.getItem('subscribed')) {
+        setShowModal(true);
+      }
     }, 5000);
 
     // Stop recycling confetti after 7 seconds
