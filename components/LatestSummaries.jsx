@@ -7,7 +7,7 @@ export default function LatestSummaries() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/summaries')
+        fetch('https://voiceconsults.onrender.com/api/summaries')
             .then(res => res.json())
             .then(data => {
                 setVideos(data);
