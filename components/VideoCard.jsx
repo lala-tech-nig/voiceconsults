@@ -3,7 +3,13 @@ import React from "react";
 import { Play, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function VideoCard({ title, duration, image, delay }) {
+export default function VideoCard({ title, duration, image, videoUrl, delay }) {
+    const handleClick = () => {
+        if (videoUrl) {
+            window.open(videoUrl, '_blank', 'noopener,noreferrer');
+        }
+    };
+
     return (
         <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -11,6 +17,7 @@ export default function VideoCard({ title, duration, image, delay }) {
             viewport={{ once: true }}
             transition={{ delay: delay, duration: 0.5 }}
             whileHover={{ y: -5 }}
+            onClick={handleClick}
             className="group cursor-pointer"
         >
             <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 shadow-md bg-stone-200">
