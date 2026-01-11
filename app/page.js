@@ -4,6 +4,7 @@ import Confetti from "react-confetti";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import LatestSummaries from "../components/LatestSummaries";
+import Merchandise from "../components/Merchandise";
 import AboutSection from "../components/AboutSection";
 import ContactForm from "../components/ContactForm";
 import Footer from "../components/Footer";
@@ -71,6 +72,7 @@ export default function Home() {
       <Header />
       <Hero />
       <LatestSummaries />
+      <Merchandise />
       <AboutSection />
       <ContactForm />
       <Footer />
