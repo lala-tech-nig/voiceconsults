@@ -116,7 +116,7 @@ export default function SubscribeModal({ isOpen, onClose }) {
                                         onClick={onClose}
                                         className="w-full bg-stone-900 hover:bg-black text-white font-bold py-3 rounded-full transition-all cursor-pointer"
                                     >
-                                        Continue to Site
+                                        Continue to Homepage
                                     </button>
                                 </motion.div>
                             )}
