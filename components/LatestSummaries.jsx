@@ -7,7 +7,7 @@ export default function LatestSummaries() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('https://voiceconsults.onrender.com/api/summaries')
+        fetch('http://localhost:5000/api/summaries')
             .then(res => res.json())
             .then(data => {
                 setVideos(data);
@@ -49,16 +49,14 @@ export default function LatestSummaries() {
                         )}
                     </div>
 
-                    {videos.length > 6 && (
-                        <div className="flex justify-center mt-12">
-                            <a
-                                href="/summaries"
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-orange-500/20 transition-all transform hover:scale-105 active:scale-95"
-                            >
-                                View All Summaries
-                            </a>
-                        </div>
-                    )}
+                    <div className="flex justify-center mt-12">
+                        <a
+                            href="/summaries"
+                            className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-orange-500/20 transition-all transform hover:scale-105 active:scale-95"
+                        >
+                            View All Summaries
+                        </a>
+                    </div>
                 </>
             )}
         </section>
